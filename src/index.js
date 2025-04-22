@@ -27,7 +27,7 @@ bot.on('message', async (msg) => {
                     [
                         {
                             text: "open web site form",
-                            web_app: { url: webApp + "/form" }
+                            web_app: { url: "https://tg-react-lands.netlify.app/form" }
                         },
                         {
                             text: "open web site ProductsList",
