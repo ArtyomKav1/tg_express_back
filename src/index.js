@@ -2,7 +2,7 @@ import TelegramBot from 'node-telegram-bot-api'
 import express from 'express'
 import cors from 'cors'
 
-const token = "7583381746:AAHWL17huYG8gl5Jce0gKr_JxilYY1yUbvU"
+const token = "7770490584:AAG5Y24T_a1IwfntHTxwxTcaV-CUSwcZsDo"
 const webApp = "https://tg-react-lands.netlify.app/"
 const PORT = 8000
 
@@ -19,7 +19,7 @@ bot.on('message', async (msg) => {
 
 
     if (text === "/start") {
-
+        console.log("start")
 
         await bot.sendMessage(chatId, 'с выпадающей формой', {
             reply_markup: {
@@ -46,7 +46,7 @@ bot.on('message', async (msg) => {
                     [
                         {
                             text: "Сделать заказ",
-                            web_app: { url: webApp }
+                            web_app: { url: "https://tg-react-lands.netlify.app/form" }
                         }
                     ]
                 ]
@@ -54,16 +54,28 @@ bot.on('message', async (msg) => {
         })
 
     }
-
     if (msg?.web_app_data?.data) {
+        console.log(msg?.web_app_data?.data)
         try {
             const data = JSON.parse(msg?.web_app_data?.data)
-            bot.sendMessage(chatId, "Спасибо за обратную связь")
-            bot.sendMessage(chatId, "Ваша страна: " + data.country)
-            bot.sendMessage(chatId, "Ваш город: " + data.sity)
+            if (!data.country || !data.sity) {
+                return bot.sendMessage(chatId, "Ошибка: не все данные заполнены");
+            }
+
+            await bot.sendMessage(
+                chatId,
+                `✅ Спасибо за обратную связь!\n` +
+                `🌍 Страна: ${data.country}\n` +
+                `🏙️ Город: ${data.sity}\n` +
+                `📋 Тип: ${data.subject === 'physical' ? 'Физ. лицо' : 'Юр. лицо'}\n\n`
+
+            )
             setTimeout(() => { bot.sendMessage(chatId, "Всю информацию вы получить в этом чате") }, 3000)
         } catch (e) {
-            console.log(e)
+            console.error("Ошибка обработки данных:", e);
+            if (msg?.chat?.id) {
+                await bot.sendMessage(msg.chat.id, "⚠️ Произошла ошибка при обработке данных");
+            }
         }
     }
 
@@ -97,8 +109,9 @@ app.post("/web-data", async (req, res) => {
 
 app.listen(PORT, () => console.log("Server started on PORT" + PORT))
 
-
-
+bot.on('web_app_data', (msg) => {
+    console.log('WebApp data received:', msg);
+});
 
 
 
