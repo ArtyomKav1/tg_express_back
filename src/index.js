@@ -2,8 +2,22 @@ import TelegramBot from 'node-telegram-bot-api'
 import express from 'express'
 import cors from 'cors'
 
-const token = "7770490584:AAG5Y24T_a1IwfntHTxwxTcaV-CUSwcZsDo"
+const token = "7532248685:AAFmHSPBqhwegFa6waN0V8PPgXTCMDN15p8"
 const webApp = "https://tg-react-lands.netlify.app/"
+
+
+
+const myIp = {
+    v0: "https://v0.personal-website.ru/",
+    v2: "https://v2.personal-website.ru/",
+    v4: "https://v4.personal-website.ru/",
+    v6: "https://v6.personal-website.ru/",
+    vue: "https://mail.personal-website.ru/"
+
+}
+
+
+
 const PORT = 8000
 
 const bot = new TelegramBot(token, { polling: true });
@@ -21,38 +35,67 @@ bot.on('message', async (msg) => {
     if (text === "/start") {
         console.log("start")
 
-        await bot.sendMessage(chatId, 'с выпадающей формой', {
+        await bot.sendMessage(chatId, 'site:', {
             reply_markup: {
                 keyboard: [
                     [
                         {
-                            text: "open web site form",
-                            web_app: { url: "https://tg-react-lands.netlify.app/form" }
+                            text: "v0",
+                            web_app: { url: myIp.v0 }
                         },
                         {
-                            text: "open web site ProductsList",
-                            web_app: { url: webApp }
+                            text: "v2",
+                            web_app: { url: myIp.v2 }
+                        },
+                        {
+                            text: "v4",
+                            web_app: { url: myIp.v4 }
+                        },
+                    ],
+                    [
+
+                        {
+                            text: "v6",
+                            web_app: { url: myIp.v6 }
+                        },
+                        {
+                            text: "vue-tg",
+                            web_app: { url: myIp.vue }
+                        },
+                        {
+                            text: "Сделать заказ",
+                            web_app: { url: "https://tg-react-lands.netlify.app/form" }
                         }
+
                     ],
                 ]
             },
 
         })
 
-        await bot.sendMessage(chatId, 'с ссылкой', {
+        // await bot.sendMessage(chatId, 'с ссылкой', {
 
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        {
-                            text: "Сделать заказ",
-                            web_app: { url: "https://tg-react-lands.netlify.app/form" }
-                        }
-                    ]
-                ]
-            }
-        })
+        //     reply_markup: {
+        //         inline_keyboard: [
+        //             [
 
+        //             ]
+        //         ]
+        //     }
+        // })
+        // await bot.sendMessage(chatId, 'myweb', {
+
+        //     reply_markup: {
+        //         inline_keyboard: [
+        //             [
+        //                 {
+        //                     text: "Сделать заказ",
+        //                     web_app: { url: "https://tg-react-lands.netlify.app/form" }
+        //                 }
+        //             ]
+        //         ]
+        //     }
+        // })
     }
     if (msg?.web_app_data?.data) {
         console.log(msg?.web_app_data?.data)
@@ -86,7 +129,6 @@ bot.on('message', async (msg) => {
 
 app.post("/web-data", async (req, res) => {
     const { products, totalPrice, queryId } = req.body
-
     try {
         await bot.answerWebAppQuery(chatId, {
             type: "article",
@@ -105,21 +147,6 @@ app.post("/web-data", async (req, res) => {
         return res.status(500).json({})
     }
 })
-
-
 app.listen(PORT, () => console.log("Server started on PORT" + PORT))
 
-bot.on('web_app_data', (msg) => {
-    console.log('WebApp data received:', msg);
-});
 
-
-
-// bot.onText(/\/echo (.+)/, (msg, match) => {
-
-
-//     const chatId = msg.chat.id;
-//     const resp = match[1];
-
-//     bot.sendMessage(chatId, resp);
-// });
